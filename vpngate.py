@@ -50,7 +50,8 @@ VPNGATE_MIRROR = os.environ.get(
     "VPNGATE_MIRROR",
     "https://raw.githubusercontent.com/fdciabdul/Vpngate-Scraper-API/main/json/data.json",
 )
-# 自己的 Cloudflare Worker 检测接口 (GET /check?sstp=host:port, 实测确认)
+# 检测端 Cloudflare Worker (GET /check?sstp=host:port, 实测确认)
+# 只被 GitHub Actions(墙外)调用, 故用 workers.dev; 墙内设备走的是 edgetunnel 的 EDT_DOMAIN
 WORKER_CHECK_URL = os.environ.get(
     "CHECK_WORKER",
     "https://ancient-wave-ea1d.qiushi19990909.workers.dev/check?sstp=vpn:vpn@",
@@ -526,7 +527,7 @@ def build_hosts_text(data):
 
 # edgetunnel 完整订阅 (vless://) 配置
 EDT_UUID = os.environ.get("EDT_UUID", "dd66e2e1-b259-4284-abac-b08c7034bd93")
-EDT_DOMAIN = os.environ.get("EDT_DOMAIN", "ed.baozi.kdns.fr")
+EDT_DOMAIN = os.environ.get("EDT_DOMAIN", "jia.baozi.kdns.fr")
 EDT_FINGERPRINT = os.environ.get("EDT_FINGERPRINT", "chrome")
 SUB_URL = os.environ.get("SUB_URL", "https://yiheweigui82.github.io/jia/sub.txt")
 

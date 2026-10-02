@@ -44,10 +44,10 @@ jobs:
           set -o pipefail
           python vpngate.py 2>&1 | tee "$RUNNER_TEMP/vpngate.log"
         env:
-          # 自己的检测 Worker (ancient-wave-ea1d); 备用域名: https://jia.baozi.kdns.fr/check?sstp=vpn:vpn@
+          # 检测端 Worker —— 只被 GitHub Actions（墙外）调用，用 workers.dev 即可，不需要自定义域名
           CHECK_WORKER: "https://ancient-wave-ea1d.qiushi19990909.workers.dev/check?sstp=vpn:vpn@"
-          # 自己的 edgetunnel 节点域名与 UUID (sub.txt 的 vless 订阅靠这两个)
-          EDT_DOMAIN: "ed.baozi.kdns.fr"
+          # edgetunnel 入口域名与 UUID —— 设备（墙内）走这个域名连，所以必须放能在墙内用的自定义域名
+          EDT_DOMAIN: "jia.baozi.kdns.fr"
           EDT_UUID: "dd66e2e1-b259-4284-abac-b08c7034bd93"
           CHECK_CONCURRENCY: "32"
           CHECK_TIMEOUT: "90"

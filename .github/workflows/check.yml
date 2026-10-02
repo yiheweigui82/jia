@@ -1,9 +1,11 @@
 name: VPN Gate Node Check
 
 on:
-  # 定时检测: 每 30 分钟一次 (cron 用 UTC; GitHub 定时任务偶有几分钟延迟属正常)
+  # 定时检测: 每 30 分钟一次 (cron 用 UTC)。
+  # ⚠️ 别用 "*/30"(= :00 与 :30) —— 整点是 GitHub Actions 最拥堵的档, 定时会被延迟甚至丢弃
+  # (实测: 用 */30 时 19:30 与 20:00 两班都没触发)。错峰到 :12/:42 可靠得多。
   schedule:
-    - cron: "*/30 * * * *"
+    - cron: "12,42 * * * *"
   # 手动触发 (Actions 页面 -> Run workflow)
   workflow_dispatch:
   # 首次部署: 推送即触发, 无需等定时

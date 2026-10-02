@@ -46,6 +46,9 @@ jobs:
         env:
           # 自己的检测 Worker (ancient-wave-ea1d); 备用域名: https://jia.baozi.kdns.fr/check?sstp=vpn:vpn@
           CHECK_WORKER: "https://ancient-wave-ea1d.qiushi19990909.workers.dev/check?sstp=vpn:vpn@"
+          # 自己的 edgetunnel 节点域名与 UUID (sub.txt 的 vless 订阅靠这两个)
+          EDT_DOMAIN: "ed.baozi.kdns.fr"
+          EDT_UUID: "dd66e2e1-b259-4284-abac-b08c7034bd93"
           CHECK_CONCURRENCY: "32"
           CHECK_TIMEOUT: "90"
 

@@ -57,6 +57,26 @@ python vpngate.py
 | `CHECK_TIMEOUT` | 单请求超时秒数（默认 90） |
 | `MAX_CHECK_NODES` | 只检测前 N 个节点（0 = 不限，调试用） |
 | `EDGE_HOSTS` / `HOSTS_ENTRY` | edgetunnel 入口地址池 |
+| `EDT_DOMAIN` | edgetunnel 入口域名（`host`/`sni` 用它） |
+| `EDT_UUID` | edgetunnel 的 UUID（客户端 ID，必须与 Worker 的 UUID 变量一致） |
+| `EDT_ADDR` | 优选IP 列表（逗号分隔，循环分配给各节点当连接地址；留空则直接用 `EDT_DOMAIN`） |
+
+### 优选IP（提速）
+
+`sub.txt` 里每个节点的**连接地址**默认是 `EDT_ADDR` 里的优选IP（`host`/`sni` 仍是
+`EDT_DOMAIN`，CF 按 SNI 把请求路由到本仓库的 edgetunnel Worker），这样客户端从墙内连
+CF 那一段走的是你实测最快的入口 IP。
+
+优选IP 会随时间和运营商变化，**觉得慢了就重新优选一次**（必须关掉代理，否则测的是
+代理的中转速度而不是 CN 直连）：
+
+```bash
+python tools/pick_cf_ip.py
+# 输出末尾会直接给出可粘贴的 EDT_ADDR 行，填进 .github/workflows/check.yml 即可
+```
+
+实测参考（本机 CN 直连，2026-10）：默认域名解析到的 IP TLS 握手 ~354ms，
+优选到 `104.26.0.1` 后 ~187ms。
 
 ## 文件说明
 

@@ -49,6 +49,8 @@ jobs:
           # edgetunnel 入口域名与 UUID —— 设备（墙内）走这个域名连，所以必须放能在墙内用的自定义域名
           EDT_DOMAIN: "jia.baozi.kdns.fr"
           EDT_UUID: "dd66e2e1-b259-4284-abac-b08c7034bd93"
+          # 优选IP（CN 直连实测 TOP3，循环分配给各节点作连接地址；host/sni 仍是 EDT_DOMAIN）
+          EDT_ADDR: "104.26.0.1,172.67.130.154,104.20.0.1"
           CHECK_CONCURRENCY: "32"
           CHECK_TIMEOUT: "90"
 

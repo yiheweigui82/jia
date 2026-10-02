@@ -529,6 +529,10 @@ def build_hosts_text(data):
 EDT_UUID = os.environ.get("EDT_UUID", "dd66e2e1-b259-4284-abac-b08c7034bd93")
 EDT_DOMAIN = os.environ.get("EDT_DOMAIN", "jia.baozi.kdns.fr")
 EDT_FINGERPRINT = os.environ.get("EDT_FINGERPRINT", "chrome")
+# 优选IP (可选): 逗号分隔的 Cloudflare 入口 IP, 循环分配给各节点当「连接地址」;
+# host/sni 仍用 EDT_DOMAIN (CF 按 SNI 路由到本 Worker), 留空则直接用 EDT_DOMAIN。
+# 重新优选: 在 CN 直连环境跑 tools/pick_cf_ip.py, 把 TOP3 填到 check.yml 的 EDT_ADDR
+EDT_ADDRS = [a.strip() for a in os.environ.get("EDT_ADDR", "").split(",") if a.strip()]
 SUB_URL = os.environ.get("SUB_URL", "https://yiheweigui82.github.io/jia/sub.txt")
 
 
@@ -573,10 +577,13 @@ def build_sub_text(data):
         f"# 自动更新: {data['generated_at']} (每 30 分钟重新检测)",
         f"# 固定地址: {SUB_URL}",
         f"# 节点域名: {EDT_DOMAIN} (传输 ws / TLS / fingerprint {EDT_FINGERPRINT})",
+        f"# 连接地址: {','.join(EDT_ADDRS) if EDT_ADDRS else EDT_DOMAIN}"
+        f"{'  (优选IP 轮换, host/sni 仍为 ' + EDT_DOMAIN + ')' if EDT_ADDRS else ''}",
         "# 名字固定; $sstp:// 链式代理(编码在 path)每 30 分钟自动更换",
         "# 账号密码固定 vpn:vpn ; 节点端口已编码进 path",
         "# ========================================================",
     ]
+    idx = 0
     ordered = sorted(
         countries.items(),
         key=lambda kv: (-int(kv[1].get("count") or 0), str(kv[1].get("code") or kv[0])),
@@ -595,12 +602,14 @@ def build_sub_text(data):
         )
         for i, n in enumerate(nodes, 1):
             name = f"{zh}-{i:02d}"
+            addr = EDT_ADDRS[idx % len(EDT_ADDRS)] if EDT_ADDRS else EDT_DOMAIN
+            idx += 1
             chain = {"type": "sstp", **_socks5_account(f"vpn:vpn@{n['host']}:{n['port']}", 443)}
             chain_json = json.dumps(chain, separators=(",", ":"))
             enc = _b64_secret_encode(chain_json, EDT_UUID)
             path = quote("/video/" + enc, safe="")
             link = (
-                f"vless://{EDT_UUID}@{EDT_DOMAIN}:443?security=tls&type=ws"
+                f"vless://{EDT_UUID}@{addr}:443?security=tls&type=ws"
                 f"&host={EDT_DOMAIN}&fp={EDT_FINGERPRINT}&sni={EDT_DOMAIN}"
                 f"&path={path}&encryption=none&alpn=#{quote(name, safe='')}"
             )

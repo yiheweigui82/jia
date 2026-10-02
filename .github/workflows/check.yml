@@ -59,6 +59,13 @@ jobs:
             tail -c 15000 "$RUNNER_TEMP/vpngate.log" 2>/dev/null || echo "(无日志)"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
+          # 关键日志行同时作为 annotation 输出 (annotation 未登录也能看到)
+          echo "--- vpngate.py 尾部日志 ---"
+          tail -n 10 "$RUNNER_TEMP/vpngate.log" 2>/dev/null | while IFS= read -r line; do
+            if [ -n "$line" ]; then
+              echo "::warning::$line"
+            fi
+          done
 
       - name: Configure Pages (首次运行自动开启 Pages)
         uses: actions/configure-pages@v5

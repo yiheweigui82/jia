@@ -44,8 +44,8 @@ jobs:
           set -o pipefail
           python vpngate.py 2>&1 | tee "$RUNNER_TEMP/vpngate.log"
         env:
-          # 检测统一走这个 Worker (如需换成自己的 Worker, 改这一行即可)
-          CHECK_WORKER: "https://check.helei.kdns.fr/check?sstp=vpn:vpn@"
+          # 自己的检测 Worker (ancient-wave-ea1d); 备用域名: https://jia.baozi.kdns.fr/check?sstp=vpn:vpn@
+          CHECK_WORKER: "https://ancient-wave-ea1d.qiushi19990909.workers.dev/check?sstp=vpn:vpn@"
           CHECK_CONCURRENCY: "32"
           CHECK_TIMEOUT: "90"
 
